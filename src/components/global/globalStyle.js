@@ -7,7 +7,7 @@ const GlobalStyle = createGlobalStyle`
     text-decoration: none;
     box-sizing: border-box;
     --white: #FFFFFF;
-    --purple-bg: #8C11BE;
+    --body-bg-color: #8C11BE;
     --button: #A328D6;
     --incoming: #03AC00;
     --outgoing: #C70000;

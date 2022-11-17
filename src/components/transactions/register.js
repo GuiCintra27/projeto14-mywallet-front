@@ -1,6 +1,7 @@
-export default function Register({type, value, description, date}){
+export default function Register({ type, value, description, date}) {
     const transactionValue = parseFloat(value).toFixed(2);
-    return(
+
+    return (
         <div className="register">
             <div>
                 <p className="date">{date}</p>

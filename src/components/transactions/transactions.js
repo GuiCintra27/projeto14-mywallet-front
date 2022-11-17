@@ -9,12 +9,13 @@ import outgoingIcon from '../../assets/add-outgoing-icon.svg';
 import Register from './register';
 
 export default function Transactions() {
-    const { TOKEN, setTOKEN, Centralizer, Logo } = useContext(UserContext);
+    const { TOKEN, setTOKEN, Centralizer } = useContext(UserContext);
     const URL = 'http://localhost:5000/transactions';
     const header = { headers: { "Authorization": `Bearer ${TOKEN}` } };
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [transactions, setTransactions] = useState('');
+    const [balance, setBalance] = useState(0);
 
     useEffect(() => {
         axios.get(URL, header)
@@ -22,6 +23,18 @@ export default function Transactions() {
                 const user = response.data;
                 setName(user.name);
                 setTransactions(user.transactions);
+                let result = 0;
+                user.transactions.forEach(item => {
+                    const value = Number(item.value);
+                    const type = item.type;
+                    if (type === 'incoming') {
+                        result += value;
+                    } else {
+                        result -= value;
+                    }
+                    console.log(result)
+                });
+                setBalance(result.toFixed(2));
             })
             .catch((error) => {
                 console.log(error.data);
@@ -44,9 +57,17 @@ export default function Transactions() {
 
             <Registers align={transactions.length > 0 ? 'flex-start' : 'center'}>
                 {transactions.length > 0 ? (
-                    transactions.map((item) => (
-                        <Register type={item.type} value={item.value} description={item.description} date={item.date} />
-                    ))
+                    <>
+                        <div className='registerContainer'>
+                            {transactions.map((item) => (
+                                <Register type={item.type} value={item.value} description={item.description} date={item.date} />
+                            ))}
+                        </div>
+                        <div className='balance'>
+                            <p>SALDO</p>
+                            <p className={balance > 0 ? 'incoming' : 'outgoing'}>{balance}</p>
+                        </div>
+                    </>
                 ) : (
                     <span className='null'>Não há registros de entrada ou saída</span>
                 )
@@ -90,7 +111,6 @@ const Title = styled.div`
 
 const Registers = styled.div`
     display: flex;
-    gap: 2rem;
     width: 32.6rem;
     height: 44.6rem;
     background-color: var(--white);
@@ -101,6 +121,7 @@ const Registers = styled.div`
     padding: 2rem 1rem 1rem 1rem;
     margin-bottom: 1.3rem;
     flex-direction: column;
+    position: relative;
 
     & > .null{
         width: 18rem;
@@ -110,8 +131,18 @@ const Registers = styled.div`
         color: var(--without-transactions);
     }
 
-    & > .register{
+    & > .registerContainer{
+        width: 100%;
+        height: 93%;
         display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        gap: 2rem;
+    }
+
+    .register{
+        display: flex;
+        flex-direction: row;
         width: 100%;
         align-items: center;
         justify-content: space-between;
@@ -120,8 +151,22 @@ const Registers = styled.div`
 
         div{
             display: flex;
-
             gap: 1rem;
+        }
+    }
+
+    & > .balance {
+        width: 100%;
+        padding: 1.5rem;
+        position: absolute;
+        bottom: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 17px;
+
+        p:nth-child(1){
+            font-weight: 700;
         }
     }
     

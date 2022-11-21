@@ -37,7 +37,7 @@ export default function Transactions() {
                 setBalance(result.toFixed(2));
             })
             .catch((error) => {
-                console.log(error.data);
+                console.log(error.response.data);
                 alert('Usuário não autorizado');
                 navigate('/');
             });
